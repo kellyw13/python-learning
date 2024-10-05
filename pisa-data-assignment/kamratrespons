@@ -1,0 +1,9 @@
+def sort_list(pisadata):
+	index = 0
+	list_country = []
+	list_medel = []
+	for index in range(index,40):
+		
+		list_country.append(pisadata[index][0])
+		list_medel.append(pisadata[index][13])
+		index += 1

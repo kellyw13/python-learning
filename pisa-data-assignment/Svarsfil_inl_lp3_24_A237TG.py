@@ -4,6 +4,7 @@
 
 # Placera dina modulimpoter här:
 import csv
+import matplotlib.pyplot as plt
 
 
 # Deluppgift 1: Funktioner från deluppgift 1 i ordning.
@@ -18,8 +19,6 @@ def read_file():
         for row in reader:
             pisadata.append(row)
     return pisadata
-
-#print(read_file())
 
 # Deluppgift 2: Funktioner från deluppgift 2 i ordning.
 def sort_best_and_worst(pisadata, data_index):
@@ -54,12 +53,6 @@ def sort_best_and_worst(pisadata, data_index):
 
     return pisadata_sorterad
 
-#testData = read_file()
-#sort_best_and_worst(testData, 13)
-
-
-
-
 # Deluppgift 3: Funktioner från deluppgift 3 i ordning.
 def kolumnmedel(listan,index):
     list_data = listan[2:]
@@ -81,36 +74,175 @@ def arsmedel(listan):
     armedel = [medel_2018, medel_2015, medel_2012, medel_2009, medel_2006, medel_2003]
     return armedel
 
-#data = read_file()
-#print(arsmedel(data))
-
 def nordTabell(listan, armedel=None):
     #list_data = listan[2:]
-    nordic_countries = ["Sweden", "Norway", "Denmark", "Finland", "Iceland"]
+    nordic_countries = ["Denmark", "Finland", "Iceland", "Norway", "Sweden"]
+    medel_ar = [2018, 2015, 2012, 2009, 2006, 2003]
+    if armedel == None:
+        armedel = arsmedel(listan)
     #list to store data for nordic countries
     nordic_data = []
     for i in listan:
         if i[0] in nordic_countries:
-            nordic_data.append(i)
-    
+            nordic_data.append(i[0:1] + i[13:19])
     print(f"{'Kunskapsutveckling i matematik enligt PISA-undersökningen 2003 – 2018.':^100}")
     print(f"{'-------------------------------------------------------------------------------------------------------------------':^100}")
     print(f"{'Länder:':^100}")
     print(f"{'År':<10} {nordic_countries[0]:<15} {nordic_countries[1]:<15} {nordic_countries[2]:<15} {nordic_countries[3]:<15} {nordic_countries[4]:<15} {'Medelvärde alla länder':15}")
     print(f"{'-------------------------------------------------------------------------------------------------------------------':^100}")
-    for i in nordic_data:
-        print(f"{listan[0][13]:<10} {i[0]:<15}")
+    for i in range(6):
+        print(f"{medel_ar[i]:<10} {nordic_data[0][i+1]:<15} {nordic_data[1][i+1]:<15} {nordic_data[2][i+1]:<15} {nordic_data[3][i+1]:<15} {nordic_data[4][i+1]:<15} {armedel[i]:^15}")
 
-data = read_file()
-nordTabell(data)
+def nordGraf(listan, armedel):
+    nordic_countries = ["Denmark", "Finland", "Iceland", "Norway", "Sweden"]
+    medel_ar = [2018, 2015, 2012, 2009, 2006, 2003]
+    armedel = ["Medel"] + armedel
+    nordic_data = []
+    for i in listan:
+        if i[0] in nordic_countries:
+            nordic_data.append(i[0:1] + i[13:19]) 
+    nordGraf_data = nordic_data + [armedel]
+    
+    #use different colors for each country
+    colors = ['b', 'g', 'r', 'c', 'm', 'y']
+
+    #create a new plot figure
+    plt.figure(figsize=(10,6))
+    
+    #plot the data for each country
+    for i in range(len(nordGraf_data)):
+        points = list(map(int, nordGraf_data[i][1:])) #converting the math scores to integers
+        plt.plot(medel_ar, points[::-1], color=colors[i], label=nordGraf_data[i][0]) #plotting the data
+    
+    #Label the graph
+    plt.xlabel("År")
+    plt.ylabel("Poäng")
+    plt.title("PISA:Kunskapsutvecklingen i matematik 2003-2018")
+    
+    plt.grid(True)
+    plt.legend()
+    
+    #display the plot
+    plt.show()
+
 
 # Deluppgift 4: Funktioner från deluppgift 4 i ordning.
-# Skriv din kod här:
+def battreSamre(data,forbattring):
+    if forbattring:
+        print("Länder med förbättrade resultat")
+    else:
+        print("Länder med försämrade resultat")
+    
+    for land in data [:5]:
+        print(land)
+
+exempel_data = [" Land 1", "Land 2", "Land 3", "Land 4", "Land 5"] 
+
+battreSamre (exempel_data, True)
+battreSamre (exempel_data, False)
+
+
+
+
+def battreSamre (data, forbattring):
+    if forbattring:
+        print("Länder med förbättrade resultat:")
+    else:
+        print("Länder med försämrade resultat:")
+        
+    for i in range(5):
+        print(f"Land{i+1}")
+        
+    pisadata = [exempel_data]
+    
+def visaMeny ():
+    print("4. Kontirnuerligt förbättrat resp. försämrat år 2003-2018")
+    val  = input(" för att köra, skriv '4': ")
+        
+    if val == '4':
+        battreSamre (pisadata,True)
+        battreSamre (pisadata, False)
+    else:
+        print("Felaktigt val avslutar programmet.")
+    
+    if __name__ == "__main__":
+        visaMeny()
+
+
 
 
 # Deluppgift 5: Funktioner från deluppgift 5 i ordning.
-# Skriv din kod här:
+def kvinna_man(data):
+    print("År och länder när kvinnorna presterar bättre än männen under åren 2003–2018.")
+    print("År\tLand\tKvinnor\tMän")
+    print("--------------------------------------------------------")
+    
+    previous_year = ""
+    for row in data[1:]:  # Hoppa över rubrikraden
+        for i in range(1, len(data[0])-1, 3):  # Hoppar över varje tredje kolumn för att matcha årsdata
+            year = data[0][i][:-1]  # Ta bort könstecknet för att få fram året
+            country = row[0]
+            man_score = int(row[i])
+            woman_score = int(row[i+1])
+            if woman_score > man_score:
+                if year != previous_year:
+                    print(f"\n{year}", end='\t')
+                    previous_year = year
+                else:
+                    print("\t", end='')
+                print(f"{country}\t{woman_score}\t{man_score}")
+
+
+
 
 
 # Huvudprogram med Meny från deluppgift 0. Använd menyrubriker enl. uppgiftsbeskrivningen.
-# Skriv din kod här:
+
+#Huvudmeny
+def visa_huvudmeny():
+    while True:
+        print("\nVälkommen till PISA-dataanalysprogrammet!")
+        print("1. Läs in csv-filen.")
+        print("2. Visa bästa och sämsta resultatet för 2018.")
+        print("3. Analysera matematikkunskaper i Norden 2003–2018.")
+        print("4. Visa länder med kontinuerlig förbättring/försämring 2003–2018.")
+        print("5. Visa när kvinnor presterat bättre än män 2003–2018.")
+        print("6. Avsluta programmet.")
+        
+        val = input("Välj ett alternativ (1-6): ")
+        
+        if val == "1":
+            print("Funktionen för att läsa in csv-filen anropas här.")
+            read_file()
+            
+        elif val == "2":
+            print("Funktionen för att visa bästa och sämsta resultatet för 2018 anropas här.")
+            data = read_file()
+            index = int(input("enter sorting index"))
+            sort_best_and_worst(data, index) 
+            
+        elif val == "3":
+            print("Funktionen för att analysera matematikkunskaper i Norden 2003–2018 anropas här.")
+            data = read_file()
+            index = int(input("enter sorting index"))
+            medel = arsmedel(data)
+            nordTabell(data)
+            nordGraf(data, medel)
+            
+        elif val == "4":
+            print("Funktionen för att visa länder med kontinuerlig förbättring/försämring 2003–2018 anropas här.")
+            data = read_file()
+            battreSamre(data, True)
+            
+        elif val == "5":
+            print("Funktionen för att visa när kvinnor presterat bättre än män 2003–2018 anropas här.")
+            data = read_file()
+            kvinna_man(data)
+            
+        elif val == "6":
+            print("Programmet är avslutat.")
+            break
+        else:
+            print("Ogiltigt val, försök igen.")
+
+visa_huvudmeny()
