@@ -21,11 +21,40 @@ def fit_and_print_dist_params(data, column_name):
     a, b = uniform.fit(data)
     print(f'Uniform distribution for {column_name}: lower-bound = {a}, upper-bound = {b}')
 
-#Plot the histogram for each dataset in the excel file
+#Plot the histogram and fit distrubution for each dataset in the excel file
 for column in data.columns:
     plt.figure
-    plt.hist(data[column], bins=15, color='pink', edgecolor='blue')
-    plt.title(f'Histogram of {column}')
+    plt.hist(data[column], bins=15, color='pink', alpha=0.7, edgecolor='blue', density=True)
+    
+    # Fit and print distribution parameters
+    fit_and_print_dist_params(data[column], column)
+    
+    # Plot fitted exponential distribution
+    loc, scale = expon.fit(data[column])
+    xmin, xmax = plt.xlim()
+    x = np.linspace(xmin, xmax, 100)
+    p = expon.pdf(x, loc, scale)
+    plt.plot(x, p, 'b:', linewidth=2, label="Exponential plot")
+    
+    # Plot fitted normal distribution
+    mu, std = norm.fit(data[column])
+    xmin, xmax = plt.xlim()
+    x = np.linspace(xmin, xmax, 100)
+    p= norm.pdf(x, mu, std)
+    plt.plot(x, p, 'k', linewidth=2, label="Normal plot")
+    
+    # plot fitted Uniform distribution
+    a,b = uniform.fit(data[column])
+    xmin, xmax = plt.xlim()
+    x = np.linspace(xmin, xmax, 100)
+    p = uniform.pdf(x, a, b-a)
+    plt.plot(x, p, 'r--', linewidth=2, label="Uniform plot")
+    
+    
+    #Add title and labels and show plots
+    plt.title(f'Histogram and fitted distribution of {column}')
     plt.xlabel('Value')
     plt.ylabel('Frequency')
+    plt.legend()
+    plt.grid(True)
     plt.show()
